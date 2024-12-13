@@ -9,4 +9,4 @@ message("C++ Standard: ${CMAKE_CXX_STANDARD}")
 
 include_directories(include)
 
-add_executable(MatchingEngine src/main.cpp src/OrderBook.cpp)
+add_executable(MatchingEngine src/main.cpp src/OrderBook.cpp src/MatchingEngine.cpp)

@@ -45,3 +45,27 @@ void OrderBook::printOrderBook() const {
         }
     }
 }
+
+std::vector<PlaceOrder>& OrderBook::getBestBuyOrder() {
+    return buyOrders.begin()->second;
+}
+
+std::vector<PlaceOrder>& OrderBook::getBestSellOrder() {
+    return sellOrders.begin()->second;
+}
+
+void OrderBook::removeFullyMatchedBuyOrder() {
+    auto it = buyOrders.begin();
+    it->second.erase(it->second.begin());
+    if (it->second.empty()) {
+        buyOrders.erase(it);
+    }
+}
+
+void OrderBook::removeFullyMatchedSellOrder() {
+    auto it = sellOrders.begin();
+    it->second.erase(it->second.begin());
+    if (it->second.empty()) {
+        sellOrders.erase(it);
+    }
+}

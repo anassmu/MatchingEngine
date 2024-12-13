@@ -11,6 +11,15 @@ public:
     void cancelOrder(int orderId);
     void printOrderBook() const;
 
+    std::vector<PlaceOrder>& getBestBuyOrder();
+    std::vector<PlaceOrder>& getBestSellOrder();
+
+    void removeFullyMatchedBuyOrder();
+    void removeFullyMatchedSellOrder();
+
+    bool hasBuyOrders() const { return !buyOrders.empty(); }
+    bool hasSellOrders() const { return !sellOrders.empty(); }
+
 private:
     // prioritize highest bids
     std::map<int, std::vector<PlaceOrder>, std::greater<>> buyOrders;
