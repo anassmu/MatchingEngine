@@ -1,10 +1,16 @@
 #ifndef MESSAGE_TYPES_H
 #define MESSAGE_TYPES_H
 
+enum class OrderType {
+    Buy,
+    Sell
+};
+
 struct PlaceOrder {
     int orderId;
     int price;
     int amount;
+    OrderType type;  // Buy or Sell
 };
 
 struct CancelOrder {
