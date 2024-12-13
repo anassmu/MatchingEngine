@@ -37,15 +37,8 @@ std::vector<OrderTraded> MatchingEngine::processMatching() {
             trades.push_back({bestSellOrders.front().orderId, tradedPrice, tradedAmount});
 
             // update the order amounts
-            bestBuyOrders.front().amount -= tradedAmount;
-            bestSellOrders.front().amount -= tradedAmount;
-
-            if (bestBuyOrders.front().amount == 0) {
-                orderBook.removeFullyMatchedBuyOrder();
-            }
-            if (bestSellOrders.front().amount == 0) {
-                orderBook.removeFullyMatchedSellOrder();
-            }
+            orderBook.updateBuyOrder(bestBuyPrice, tradedAmount);
+            orderBook.updateSellOrder(bestSellPrice, tradedAmount);
         } else {
             break;
         }

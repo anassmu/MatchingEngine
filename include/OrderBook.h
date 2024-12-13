@@ -14,11 +14,12 @@ public:
     std::vector<PlaceOrder>& getBestBuyOrder();
     std::vector<PlaceOrder>& getBestSellOrder();
 
-    void removeFullyMatchedBuyOrder();
-    void removeFullyMatchedSellOrder();
-
     bool hasBuyOrders() const { return !buyOrders.empty(); }
     bool hasSellOrders() const { return !sellOrders.empty(); }
+
+    // update after a trade
+    void updateBuyOrder(int price, int amount);
+    void updateSellOrder(int price, int amount);
 
 private:
     // prioritize highest bids

@@ -54,18 +54,29 @@ std::vector<PlaceOrder>& OrderBook::getBestSellOrder() {
     return sellOrders.begin()->second;
 }
 
-void OrderBook::removeFullyMatchedBuyOrder() {
-    auto it = buyOrders.begin();
-    it->second.erase(it->second.begin());
-    if (it->second.empty()) {
-        buyOrders.erase(it);
+void OrderBook::updateBuyOrder(int price, int amount) {
+    auto it = buyOrders.find(price);
+    if (it != buyOrders.end() && !it->second.empty()) {
+        it->second.front().amount -= amount;
+        if (it->second.front().amount <= 0) {
+            // remove the fully matched order and price if no order remain
+            it->second.erase(it->second.begin());  
+            if (it->second.empty()) {
+                buyOrders.erase(it);
+            }
+        }
     }
 }
 
-void OrderBook::removeFullyMatchedSellOrder() {
-    auto it = sellOrders.begin();
-    it->second.erase(it->second.begin());
-    if (it->second.empty()) {
-        sellOrders.erase(it);
+void OrderBook::updateSellOrder(int price, int amount) {
+    auto it = sellOrders.find(price);
+    if (it != sellOrders.end() && !it->second.empty()) {
+        it->second.front().amount -= amount;
+        if (it->second.front().amount <= 0) {
+            it->second.erase(it->second.begin());
+            if (it->second.empty()) {
+                sellOrders.erase(it);
+            }
+        }
     }
 }
