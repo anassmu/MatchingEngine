@@ -30,15 +30,27 @@ void MatchingEngine::stopProcessing() {
     processing_ = false;
 }
 
-OrderPlaced MatchingEngine::handlePlaceOrder(const PlaceOrder& order) {
+std::optional<RequestRejected> MatchingEngine::handlePlaceOrder(const PlaceOrder& order) {
+    if (order.price <= 0 || order.amount <= 0) {
+        return RequestRejected{
+            order.orderId,
+            "Invalid order: Price and amount must be greater than 0."
+        };
+    }
     orderBook.addOrder(order);
-    return {order.orderId, order.price, order.amount};
+    // no reject
+    return std::nullopt; 
 }
 
-OrderCanceled MatchingEngine::handleCancelOrder(int orderId) {
-    orderBook.cancelOrder(orderId);
-    // 0 for now
-    return {orderId, 0};
+std::optional<RequestRejected> MatchingEngine::handleCancelOrder(int orderId) {
+    if (!orderBook.cancelOrder(orderId)) {
+        return RequestRejected{
+            orderId,
+            "Order not found: Unable to cancel the order."
+        };
+    }
+    // no reject
+    return std::nullopt;
 }
 
 const OrderBook& MatchingEngine::getOrderBook() const {

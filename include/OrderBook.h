@@ -8,7 +8,7 @@
 class OrderBook {
 public:
     void addOrder(const PlaceOrder& order);
-    void cancelOrder(int orderId);
+    bool cancelOrder(int orderId);
     void printOrderBook() const;
 
     std::vector<PlaceOrder>& getBestBuyOrder();

@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <atomic>
+#include <optional>
 #include "MessageTypes.h"
 #include "OrderBook.h"
 #include "ThreadSafeQueue.h"
@@ -14,8 +15,8 @@ public:
     void handleIncomingOrders(ThreadSafeQueue<PlaceOrder>& placeQueue, ThreadSafeQueue<int>& cancelQueue);
     void stopProcessing();
 
-    OrderPlaced handlePlaceOrder(const PlaceOrder& order);
-    OrderCanceled handleCancelOrder(int orderId);
+    std::optional<RequestRejected> handlePlaceOrder(const PlaceOrder& order);
+    std::optional<RequestRejected> handleCancelOrder(int orderId);
 
     const OrderBook& getOrderBook() const;
 

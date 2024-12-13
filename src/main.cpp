@@ -58,6 +58,19 @@ int main() {
     client1.join();
     client2.join();
 
+
+    // process rejections
+    while (!cancelOrderQueue.empty()) {
+        int cancelOrderId;
+        if (cancelOrderQueue.pop(cancelOrderId)) {
+            auto rejection = engine.handleCancelOrder(cancelOrderId);
+            if (rejection) {
+                std::cout << "request rejected: ID = " << rejection->requestId
+                          << ", reason = " << rejection->reason << "\n";
+            }
+        }
+    }
+
     // send a stop signal -1
     placeOrderQueue.push({-1, 0, 0, OrderType::Buy});
     engine.stopProcessing();

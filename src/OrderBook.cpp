@@ -14,14 +14,23 @@ void OrderBook::addOrder(const PlaceOrder& order) {
     }
 }
 
-void OrderBook::cancelOrder(int orderId) {
+bool OrderBook::cancelOrder(int orderId) {
+
+    bool orderFound = false;
+
     // buyOrders
     for (auto it = buyOrders.begin(); it != buyOrders.end();) {
         auto& orders = it->second;
+        auto initialSize = orders.size();
+
         orders.erase(
             std::remove_if(orders.begin(), orders.end(),
                 [orderId](const PlaceOrder& order) { return order.orderId == orderId; }),
             orders.end());
+
+        if (orders.size() < initialSize) {
+            orderFound = true;
+        }
 
         // If no orders remove the price
         if (orders.empty()) {
@@ -34,10 +43,16 @@ void OrderBook::cancelOrder(int orderId) {
     // sellOrders
     for (auto it = sellOrders.begin(); it != sellOrders.end();) {
         auto& orders = it->second;
+        auto initialSize = orders.size();
+
         orders.erase(
             std::remove_if(orders.begin(), orders.end(),
                 [orderId](const PlaceOrder& order) { return order.orderId == orderId; }),
             orders.end());
+
+        if (orders.size() < initialSize) {
+            orderFound = true;
+        } 
 
         // If no orders remove the price
         if (orders.empty()) {
@@ -46,6 +61,8 @@ void OrderBook::cancelOrder(int orderId) {
             ++it;
         }
     }
+
+    return orderFound;
 }
 
 void OrderBook::printOrderBook() const {
