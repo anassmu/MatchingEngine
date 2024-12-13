@@ -1,5 +1,22 @@
 #include "MatchingEngine.h"
 #include <iostream>
+#include <thread>
+
+MatchingEngine::MatchingEngine() : processing_(true) {}
+
+void MatchingEngine::handleIncomingOrders(ThreadSafeQueue<PlaceOrder>& queue) {
+    while (processing_) {
+        PlaceOrder order;
+        if (queue.pop(order)) {
+            handlePlaceOrder(order);
+        }
+        processMatching();
+    }
+}
+
+void MatchingEngine::stopProcessing() {
+    processing_ = false;
+}
 
 OrderPlaced MatchingEngine::handlePlaceOrder(const PlaceOrder& order) {
     orderBook.addOrder(order);
@@ -35,6 +52,11 @@ std::vector<OrderTraded> MatchingEngine::processMatching() {
 
             trades.push_back({bestBuyOrders.front().orderId, tradedPrice, tradedAmount});
             trades.push_back({bestSellOrders.front().orderId, tradedPrice, tradedAmount});
+
+            std::cout << "trade executed: buyer ID = " << bestBuyOrders.front().orderId
+                                << ", seller ID = " << bestSellOrders.front().orderId
+                                << ", price = " << tradedPrice
+                                << ", amount = " << tradedAmount << "\n";
 
             // update the order amounts
             orderBook.updateBuyOrder(bestBuyPrice, tradedAmount);
