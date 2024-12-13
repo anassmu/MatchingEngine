@@ -4,10 +4,18 @@
 
 MatchingEngine::MatchingEngine() : processing_(true) {}
 
-void MatchingEngine::handleIncomingOrders(ThreadSafeQueue<PlaceOrder>& queue) {
+void MatchingEngine::handleIncomingOrders(ThreadSafeQueue<PlaceOrder>& placeQueue, ThreadSafeQueue<int>& cancelQueue) {
     while (processing_) {
+        // cancel requests
+        int cancelOrderId;
+        while (!cancelQueue.empty()) {
+            if (cancelQueue.pop(cancelOrderId)) {
+                handleCancelOrder(cancelOrderId);
+            }
+        }
+        // place orders
         PlaceOrder order;
-        if (queue.pop(order)) {
+        if (placeQueue.pop(order)) {
             if (order.orderId == -1) {
                 std::cout << "stop signal received.\n";
                 break;

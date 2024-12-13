@@ -11,7 +11,7 @@ class MatchingEngine {
 public:
     MatchingEngine();
 
-    void handleIncomingOrders(ThreadSafeQueue<PlaceOrder>& queue);
+    void handleIncomingOrders(ThreadSafeQueue<PlaceOrder>& placeQueue, ThreadSafeQueue<int>& cancelQueue);
     void stopProcessing();
 
     OrderPlaced handlePlaceOrder(const PlaceOrder& order);

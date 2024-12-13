@@ -15,18 +15,36 @@ void OrderBook::addOrder(const PlaceOrder& order) {
 }
 
 void OrderBook::cancelOrder(int orderId) {
-    for (auto& [price, orders] : buyOrders) {
+    // buyOrders
+    for (auto it = buyOrders.begin(); it != buyOrders.end();) {
+        auto& orders = it->second;
         orders.erase(
             std::remove_if(orders.begin(), orders.end(),
                 [orderId](const PlaceOrder& order) { return order.orderId == orderId; }),
             orders.end());
+
+        // If no orders remove the price
+        if (orders.empty()) {
+            it = buyOrders.erase(it);
+        } else {
+            ++it;
+        }
     }
 
-    for (auto& [price, orders] : sellOrders) {
+    // sellOrders
+    for (auto it = sellOrders.begin(); it != sellOrders.end();) {
+        auto& orders = it->second;
         orders.erase(
             std::remove_if(orders.begin(), orders.end(),
                 [orderId](const PlaceOrder& order) { return order.orderId == orderId; }),
             orders.end());
+
+        // If no orders remove the price
+        if (orders.empty()) {
+            it = sellOrders.erase(it);
+        } else {
+            ++it;
+        }
     }
 }
 
