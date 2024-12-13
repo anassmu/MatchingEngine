@@ -43,7 +43,8 @@ int main() {
     client1.join();
     client2.join();
 
-    // stop
+    // send a stop signal -1
+    orderQueue.push({-1, 0, 0, OrderType::Buy});
     engine.stopProcessing();
     engineThread.join();
 

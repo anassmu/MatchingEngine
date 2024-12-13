@@ -8,6 +8,10 @@ void MatchingEngine::handleIncomingOrders(ThreadSafeQueue<PlaceOrder>& queue) {
     while (processing_) {
         PlaceOrder order;
         if (queue.pop(order)) {
+            if (order.orderId == -1) {
+                std::cout << "stop signal received.\n";
+                break;
+            }
             handlePlaceOrder(order);
         }
         processMatching();
