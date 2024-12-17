@@ -31,7 +31,7 @@ void MatchingEngine::stopProcessing() {
 }
 
 std::optional<RequestRejected> MatchingEngine::handlePlaceOrder(const PlaceOrder& order) {
-    if (order.price <= 0 || order.amount <= 0) {
+    if (order.price <= 0 || order.amount == 0) {
         return RequestRejected{
             order.orderId,
             "Invalid order: Price and amount must be greater than 0."

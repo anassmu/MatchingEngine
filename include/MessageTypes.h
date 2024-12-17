@@ -16,7 +16,6 @@ struct PlaceOrder {
     int orderId;
     int price;
     int amount;
-    OrderType type;  // Buy or Sell
 };
 
 struct CancelOrder {

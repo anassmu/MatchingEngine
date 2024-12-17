@@ -4,6 +4,7 @@
 #include <map>
 #include <vector>
 #include "MessageTypes.h"
+#include <unordered_map>
 
 class OrderBook {
 public:
@@ -27,6 +28,9 @@ private:
 
     // prioritize lowest asks
     std::map<int, std::vector<PlaceOrder>> sellOrders;
+
+     // orderId → iterator to map entry + index in vector
+    std::unordered_map<int, std::pair<std::map<int, std::vector<PlaceOrder>>::iterator, size_t>> orderLookup;
 };
 
 #endif // ORDER_BOOK_H

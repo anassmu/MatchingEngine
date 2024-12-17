@@ -2,67 +2,48 @@
 #include <iostream>
 
 void OrderBook::addOrder(const PlaceOrder& order) {
-    if (order.price <= 0 || order.amount <= 0) {
-        std::cerr << "Invalid order: Price and amount must bepositive." << std::endl;
-        return;
-    }
+    int price = order.price;
 
-    if (order.type == OrderType::Buy) {
-        buyOrders[order.price].push_back(order);
-    } else if (order.type == OrderType::Sell) {
-        sellOrders[order.price].push_back(order);
+    if (order.amount > 0) {
+        auto it = buyOrders.try_emplace(price).first;
+        it->second.push_back(order);
+        orderLookup[order.orderId] = {it, it->second.size() - 1};
+    } else {
+        auto it = sellOrders.try_emplace(price).first;
+        it->second.push_back(order);
+        orderLookup[order.orderId] = {it, it->second.size() - 1};
     }
 }
 
+
 bool OrderBook::cancelOrder(int orderId) {
 
-    bool orderFound = false;
+    auto it = orderLookup.find(orderId);
 
-    // buyOrders
-    for (auto it = buyOrders.begin(); it != buyOrders.end();) {
-        auto& orders = it->second;
-        auto initialSize = orders.size();
+    if (it == orderLookup.end()) {
+        return false; 
+    }
 
-        orders.erase(
-            std::remove_if(orders.begin(), orders.end(),
-                [orderId](const PlaceOrder& order) { return order.orderId == orderId; }),
-            orders.end());
+    auto& [mapIt, index] = it->second;
+    auto& orders = mapIt->second;
 
-        if (orders.size() < initialSize) {
-            orderFound = true;
-        }
+    // Remove the order by swapping with the last element
+    if (index < orders.size()) {
+        orders[index] = orders.back();
+        orders.pop_back();
+    }
 
-        // If no orders remove the price
-        if (orders.empty()) {
-            it = buyOrders.erase(it);
+    // Clean up empty price levels
+    if (orders.empty()) {
+        if (mapIt->first > 0) { 
+            buyOrders.erase(mapIt);
         } else {
-            ++it;
+            sellOrders.erase(mapIt);
         }
     }
 
-    // sellOrders
-    for (auto it = sellOrders.begin(); it != sellOrders.end();) {
-        auto& orders = it->second;
-        auto initialSize = orders.size();
-
-        orders.erase(
-            std::remove_if(orders.begin(), orders.end(),
-                [orderId](const PlaceOrder& order) { return order.orderId == orderId; }),
-            orders.end());
-
-        if (orders.size() < initialSize) {
-            orderFound = true;
-        } 
-
-        // If no orders remove the price
-        if (orders.empty()) {
-            it = sellOrders.erase(it);
-        } else {
-            ++it;
-        }
-    }
-
-    return orderFound;
+    orderLookup.erase(it);
+    return true;
 }
 
 void OrderBook::printOrderBook() const {

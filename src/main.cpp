@@ -21,15 +21,13 @@ void testClient(ThreadSafeQueue<PlaceOrder>& placeQueue, ThreadSafeQueue<int>& c
             PlaceOrder order = {
                 clientId * 100 + i,
                 50 + i * 10,
-                10,
-                i % 2 == 0 ? OrderType::Buy : OrderType::Sell
+                i % 2 == 0 ? 10 : -10
             };
 
             std::cout << "client " << clientId << " sending order: "
                       << "order ID: " << order.orderId
                       << ", price: " << order.price
-                      << ", amount: " << order.amount
-                      << ", type: " << (order.type == OrderType::Buy ? "buy" : "sell") << "\n";
+                      << ", amount: " << order.amount << "\n";
 
             placeQueue.push(order);
             placedOrderIds.push_back(order.orderId);  // Track the order ID
@@ -72,7 +70,7 @@ int main() {
     }
 
     // send a stop signal -1
-    placeOrderQueue.push({-1, 0, 0, OrderType::Buy});
+    placeOrderQueue.push({-1, 0, 0});
     engine.stopProcessing();
     engineThread.join();
 
